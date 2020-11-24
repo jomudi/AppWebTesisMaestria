@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>orgnismso</title>
+</head>
+<body>
+
+<button onclick="prende()">aduio</button>
+
+<script>
+var audioCtx = null;
+var freq = 440;
+var uuid = uuidv4();
+var lat = 0;
+var lng = 0;
+var serverTOThreadID;
+var serverFROMThreadID;
+
+
+function prende(){
+	console.log("picado");
+
+	if ("geolocation" in navigator) console.log("si tengo");
+	else console.log("NO tengo");
+
+	var watchID = navigator.geolocation.watchPosition(function(position) {
+  		actualizaFreq(position.coords.latitude,position.coords.longitude);
+	});
+
+	if(audioCtx == null){
+		audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+	}
+	oscillator = audioCtx.createOscillator();
+	//oscillator.start();
+	oscillator.frequency.value = freq;
+	oscillator.connect(audioCtx.destination);
+	//oscillator.stop(audioCtx.currentTime + 2);
+
+  serverTOThreadID = window.setInterval(updateTOServer, 1000);
+  serverFROMThreadID = window.setInterval(updateFROMServer, 5111);
+}
+
+
+function actualizaFreq(lt, ln){
+  lat = lt;
+  lng = ln;
+	console.log(lat.toString() + " " + lng.toString());
+	var distanciaAlZocalo = distance(lat,lng,19.432613,-99.133042,"K");
+	console.log(distanciaAlZocalo);
+	freq = map(distanciaAlZocalo,0,100,20,2000);
+	oscillator.frequency.value = freq;
+}
+
+
+function updateTOServer(){
+	var request = new XMLHttpRequest();
+  console.log(uuid + lat.toString() + lng.toString());
+	request.open('GET', 'http://localhost:5000/update?id=' + uuid + "&lat=" + lat.toString() + "&lng=" + lng.toString(), true);
+	//request.setRequestHeader("Content-type", "application/json");
+	request.onload =(function () {
+  		console.log(request.response);
+  	});
+  	request.send();
+}
+
+function updateFROMServer(){
+  var request = new XMLHttpRequest();
+  console.log(uuid + lat.toString() + lng.toString());
+  request.open('GET', 'http://localhost:5000/getworld', true);
+  //request.setRequestHeader("Content-type", "application/json");
+  request.onload =(function () {
+      console.log(request.response);
+    });
+    request.send();
+}
+
+function map(n, start1, stop1, start2, stop2) {
+  return ((n-start1)/(stop1-start1))*(stop2-start2)+start2;
+};
+
+function distance(lat1, lon1, lat2, lon2, unit) {
+    if ((lat1 == lat2) && (lon1 == lon2)) {
+        return 0;
+    }
+    else {
+        var radlat1 = Math.PI * lat1/180;
+        var radlat2 = Math.PI * lat2/180;
+        var theta = lon1-lon2;
+        var radtheta = Math.PI * theta/180;
+        var dist = Math.sin(radlat1) * Math.sin(radlat2) + Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
+        if (dist > 1) {
+            dist = 1;
+        }
+        dist = Math.acos(dist);
+        dist = dist * 180/Math.PI;
+        dist = dist * 60 * 1.1515;
+        if (unit=="K") { dist = dist * 1.609344 }
+        if (unit=="N") { dist = dist * 0.8684 }
+        return dist;
+    }
+}
+
+function uuidv4() {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+    var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+    return v.toString(16);
+  });
+}
+
+</script>
+
+<h1>organismo</h1>
+<p>suena bello</p>
+
+
+</body>
+</html>
