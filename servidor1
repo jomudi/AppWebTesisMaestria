@@ -1,0 +1,25 @@
+from flask import Flask
+from flask import jsonify
+from flask import request
+
+app = Flask(__name__)
+
+UserData = { 'didi' : [12,34],
+			 'joce' : [56,78]
+			}
+
+@app.route('/update')
+def update():
+	print(request.args)
+	response = jsonify(["ok"])
+	response.headers.add('Access-Control-Allow-Origin', '*')
+	return response
+
+@app.route('/getworld')
+def getworld():
+	response = jsonify(UserData)
+	response.headers.add('Access-Control-Allow-Origin', '*')
+	return response
+
+if __name__ == '__main__':
+	app.run()
