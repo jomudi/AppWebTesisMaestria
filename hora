@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>hora</title>
+</head>
+<body>
+
+<script>
+
+var freq = 100;
+var oscillator;
+var myhour = 0;
+var date = new Date();
+var audioCtx = null;
+var hiloActualizaFreqID = window.setInterval(actualizaFreq, 10000);
+
+
+function suena(){
+  if(audioCtx == null){
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+	}
+  oscillator = audioCtx.createOscillator();
+  oscillator.frequency.value = freq;
+	oscillator.connect(audioCtx.destination);
+  oscillator.start();
+  }
+
+function actualizaFreq(){
+  var minutos = date.getMinutes
+  myhour = minutos
+  freq = map(50, 3000, 0, 59);
+  oscillator.frequency.value = freq;
+}
+
+function map(n, start1, stop1, start2, stop2) {
+    return ((n-start1)/(stop1-start1))*(stop2-start2)+start2;
+}
+
+</script>
+
+</body>
+</html>
