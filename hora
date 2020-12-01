@@ -7,7 +7,7 @@
 
 <h2>La hora suena</h2>
 
-<p id="frecuencia">Cambia la frecuencia.</p>
+<p id="frecuencia">Senoide que cambia su frecuencia.</p>
 
 <button onclick="suena()">Iniciar</button>
 
