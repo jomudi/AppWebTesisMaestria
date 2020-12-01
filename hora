@@ -5,44 +5,60 @@
 </head>
 <body>
 
+<h2>La hora suena</h2>
+
+<p id="frecuencia">Cambia la frecuencia.</p>
+
+<button onclick="suena()">Iniciar</button>
+
 <script>
 
 var freq = 100;
 var oscillator = null; /////
-var myhour = 0;
-var date = new Date();
+//var myhour = 0;
+//var date = new Date();
 var audioCtx = null;
 var hiloActualizaFreqID = window.setInterval(actualizaFreq, 10000);
 
+window.addEventListener('load', init, false);
+function init() {
+  try {
+    // Fix up for prefixing
+    audioCtx = new (window.AudioContext||window.webkitAudioContext)();
+  }
+  catch(e) {
+    alert('Web Audio API is not supported in this browser');
+  }
+	oscillator = audioCtx.createOscillator();
+	oscillator.frequency.value = freq;
+	oscillator.connect(audioCtx.destination);
+}
 
 function suena(){
-
-  if(audioCtx == null){
-    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-	}
-  oscillator = audioCtx.createOscillator();
-  oscillator.frequency.value = freq;
-	oscillator.connect(audioCtx.destination);
-  oscillator.start();
-  }
+	oscillator.start();
+  return "Sonando...";
+}
 
 ///// Reordené
 function map(tl, a1, a2, b1, b2) {
-  var stretch = ((b2 - b1)/(a2 - a1)); //////
-   return ((tl - a1)*(stretch) + b1); //////
+  var stretch = (b2 - b1)/(a2 - a1); //////
+   return (tl - a1)*(stretch) + b1; //////
 }
 
 function actualizaFreq(){
-  var minutos = Date.getMinutes
-  myhour = minutos
-  freq = map(myhour,50, 3000, 0, 59);
+  //var nueva_date = new Date();
+	var minutos = (new Date()).getSeconds();
+	//myhour = minutos;
+	freq = map(minutos, 0, 59, 20, 400);
+  console.log("minutos: " + minutos);
+  console.log("freq: " + freq);
 	if(oscillator != null){ ///////
- 		oscillator.frequency.value = freq;
+ 		oscillator.frequency.setValueAtTime(freq, audioCtx.currentTime);
 	}
 }
 
+init();
 </script>
 
 </body>
 </html>
-
