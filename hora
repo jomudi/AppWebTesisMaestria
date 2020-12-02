@@ -49,7 +49,7 @@ function actualizaFreq(){
   //var nueva_date = new Date();
 	var minutos = (new Date()).getSeconds();
 	//myhour = minutos;
-	freq = map(minutos, 0, 59, 20, 400);
+	freq = map(minutos, 0, 59, 40, 400);
   console.log("minutos: " + minutos);
   console.log("freq: " + freq);
 	if(oscillator != null){ ///////
